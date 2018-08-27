@@ -1,0 +1,75 @@
+apply plugin: 'com.android.library'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.novoda.bintray-release'
+apply from: '../quality.gradle'
+
+group = 'com.schibstedspain.android'
+version = '3.1.0'
+
+android {
+  compileSdkVersion 25
+  buildToolsVersion '25.0.2'
+
+  defaultConfig {
+    minSdkVersion 15
+    targetSdkVersion 25
+    versionCode 1
+    versionName "1.0"
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    consumerProguardFiles 'lib-proguard-rules.txt'
+    vectorDrawables.useSupportLibrary = true
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+      shrinkResources true
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+  dexOptions {
+    preDexLibraries !"true".equals(System.getenv("TRAVIS"))
+  }
+}
+
+retrolambda {
+  javaVersion JavaVersion.VERSION_1_7
+}
+
+dependencies {
+  compile fileTree(dir: 'libs', include: ['*.jar'])
+
+  def supportVersion = '25.1.1'
+  compile "com.android.support:appcompat-v7:$supportVersion"
+  compile "com.android.support:design:$supportVersion"
+
+  def playServicesVersion = '10.0.1'
+  compile "com.google.android.gms:play-services-maps:$playServicesVersion"
+  compile "com.google.android.gms:play-services-location:$playServicesVersion"
+
+  compile ('com.schibstedspain.android:android-reactive-location:0.10.1') {
+    exclude group: 'com.google.android.gms'
+  }
+
+  compile "io.reactivex:rxandroid:1.2.1"
+  compile 'io.reactivex:rxjava:1.2.4'
+
+  androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+  androidTestCompile 'com.android.support.test:runner:0.5'
+  androidTestCompile 'com.android.support.test:rules:0.5'
+  androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+  androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.1'
+  androidTestCompile 'org.mockito:mockito-core:1.10.19'
+}
+
+publish {
+  userOrg = 'schibstedspain'
+  groupId = 'com.schibstedspain.android'
+  artifactId = 'leku'
+  publishVersion = '3.1.0'
+  desc = 'Location picker component for Android. It returns a latitude,longitude and an address based on the location picked in the LocationPickerActivity provided.'
+  website = 'https://github.com/SchibstedSpain/leku'
+}
